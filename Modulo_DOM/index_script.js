@@ -15,12 +15,15 @@ window.onload = function(){
 /** DOM tem Prioridade */
 document.addEventListener("DOMContentLoaded", function(event) {
     console.log("DOM completamente carregado e analisado");
-    //preparando um HTML total
-
+    //variaveis de teste
     var equipamento1       = new Equipamento('equipamento 1')
     var equipamento2       = new Equipamento('equipamento 2')
     distribuicao.areas[0].salvaEquipamentoArea(equipamento1)
     distribuicao.areas[1].salvaEquipamentoArea(equipamento2)
+
+    //preparando um HTML total
+
+    animacoes()
 
     refDiv = document.createElement("div",{
         id:'_id_ref'
@@ -185,4 +188,46 @@ function limpaMenosFirstChild(elem){
 function enableBtn() {
     let btn = document.getElementById('id_button_transfer')
     btn.removeAttribute('disabled')
+}
+
+
+function animacoes(){
+    div1 = document.createElement("div",{
+        id:'animate2'
+    })
+    p1  = document.createElement("p")
+    vc  = document.createElement("p")
+    inimigo  = document.createElement("p")
+    vc.innerHTML ='vc'
+    inimigo.innerHTML ='inimigo'
+
+    p1.innerHTML = 'Começa'
+    div1.appendChild(p1)
+
+    div2 = document.createElement("div",{
+        id:'container'
+    })
+
+    animate1 = document.createElement("div",{
+        id:'animate'
+    })
+
+    animate2 = document.createElement("div",{
+        id:'animate3'
+    })
+
+    animate3 = document.createElement("div",{
+        id:'animate4'
+    })
+    p2  = document.createElement("p",{
+        id:"pega1"
+    })
+    animate2.appendChild(vc)
+    animate3.appendChild(inimigo)
+
+    p2.innerHTML = 'pega eu'
+    div2.appendChild(animate1)
+    div2.appendChild(div1)
+    div2.appendChild(animate2)
+    div2.appendChild(animate3)   
 }
