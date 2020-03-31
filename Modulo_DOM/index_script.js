@@ -1,15 +1,6 @@
 window.onload = function(){
     console.log('Onload disparado');
     //inicializacao de animacao caso necessário
-    container   = document.getElementsByClassName('container')
-    start       = document.getElementById('animate2')
-    container[0].setAttribute('hidden','hidden')
-    start.setAttribute('hidden','hidden')
-    delete container
-    delete start
-    document.getElementById('pega1').onmouseover  = pare;
-    document.getElementById('animate2').onclick = corre;
-    document.addEventListener("keypress", moveVc);
 }
 
 /** DOM tem Prioridade */
@@ -20,10 +11,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var equipamento2       = new Equipamento('equipamento 2')
     distribuicao.areas[0].salvaEquipamentoArea(equipamento1)
     distribuicao.areas[1].salvaEquipamentoArea(equipamento2)
-
+    // animacoes()
     //preparando um HTML total
-
-    animacoes()
 
     refDiv = document.createElement("div",{
         id:'_id_ref'
@@ -31,34 +20,20 @@ document.addEventListener("DOMContentLoaded", function(event) {
     document.body.appendChild(refDiv);
     h1 = document.createElement("h1");
     nodeH1 = document.createTextNode(distribuicao.nome);
-    br = document.createElement("br");
     //title
     h1.appendChild(nodeH1);  
     
     //table
     t = document.createElement('table',{
-        id:'_id_ref_table',
-        class:'table' 
+        id:"_id_ref_table",
+        class:"table" 
     })
-    atualizaDataTable(completeTable(t),distribuicao)
+    atualizaDataTable(completeTable(t,["Area","Qtd de Equipamentos"]),distribuicao)
 
     //select transfer
-    st1 = document.createElement('select',{
-        id:"id_select_armazem1",
-        name:"name_select_armazem1"
-    })
-    st2 = document.createElement('select',{
-        id:"id_select_armazem2",
-        name:"name_select_armazem2"
-    })
-    se1 = document.createElement('select',{
-        id:"id_select_equipamento1",
-        name:"name_select_equipamento1",
-        hidden:false
-    })
-    addOption(st1,'Selecione...','')
-    addOption(st2,'Selecione...','')
-    addOption(se1,'Selecione...','')
+    st1 = makeSelect("id_select_armazem1","name_select_armazem1")
+    st2 = makeSelect("id_select_armazem2","name_select_armazem2")
+    se1 = makeSelect("id_select_equipamento1","name_select_equipamento1")
     addArmazem(st1,distribuicao)
     addArmazem(st2,distribuicao,false)
 
@@ -72,17 +47,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
         disabled:true
     })
     btn1.innerHTML  ='Transferir'
-
     btn1.onclick    = submitTransf 
 
+    form1 = makeForm(1,["Nome do Equipamento","Peso","Preço"],["text","number","checkbox"],true);
+    div1  = makeDiv(1,[form1])
+    div2  = makeDiv(2,[br(),st1,se1,br(),st2,btn1,br()])
+    
+    
     refDiv.appendChild(h1)
     refDiv.appendChild(t)
-    refDiv.appendChild(br)
-    refDiv.appendChild(st1)
-    refDiv.appendChild(se1)
-    refDiv.appendChild(br)
-    refDiv.appendChild(st2)
-    refDiv.appendChild(btn1)
+    refDiv.appendChild(br())
+    refDiv.appendChild(div1)
+    refDiv.appendChild(br())
+    refDiv.appendChild(div2)
     
     delete h1
     delete nodeH1
@@ -93,41 +70,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
     delete t
 
 },false); 
-        
-function completeTable(t,head = ['Area','Qtd Equipamentos']) {
-    //head
-    let thead = t.createTHead()
-    let thead_row = thead.insertRow(0)
-    head.forEach(function(elem,index) {
-        let thead_cell = thead_row.insertCell(index)
-        thead_cell.innerHTML = elem
-    })
-    //body
-    return t.createTBody()
-}
-
-function addRow(t,key,value) {
-    let tbody_row = t.insertRow(0)
-    let tbody_cell_key = tbody_row.insertCell(0)
-    tbody_cell_key.innerHTML = key
-    tbody_cell_key.setAttribute('class','ind_table_body')
-    let tbody_cell_value = tbody_row.insertCell(1)
-    tbody_cell_value.innerHTML = value
-}
-
-function atualizaDataTable(tbody,distribuicao) {
-    tbody.innerHTML = ''
-    distribuicao.areas.forEach(function(elem,index,arr) {
-        addRow(tbody,elem.nome,elem.quantidadeEquipamentos)
-    })
-}
-
-function addOption(select,text,value) {
-    let option = document.createElement("option")
-    option.text = text
-    option.value = value
-    select.add(option)
-}
 
 function addArmazem(select,distribuicao,withEquip = true){
     distribuicao.areas.forEach(
@@ -190,44 +132,32 @@ function enableBtn() {
     btn.removeAttribute('disabled')
 }
 
-
-function animacoes(){
-    div1 = document.createElement("div",{
-        id:'animate2'
+function atualizaDataTable(tbody,distribuicao) {
+    tbody.innerHTML = ''
+    distribuicao.areas.forEach(function(elem,index,arr) {
+        addRow(tbody,elem.nome,elem.quantidadeEquipamentos)
     })
-    p1  = document.createElement("p")
-    vc  = document.createElement("p")
-    inimigo  = document.createElement("p")
-    vc.innerHTML ='vc'
-    inimigo.innerHTML ='inimigo'
-
-    p1.innerHTML = 'Começa'
-    div1.appendChild(p1)
-
-    div2 = document.createElement("div",{
-        id:'container'
-    })
-
-    animate1 = document.createElement("div",{
-        id:'animate'
-    })
-
-    animate2 = document.createElement("div",{
-        id:'animate3'
-    })
-
-    animate3 = document.createElement("div",{
-        id:'animate4'
-    })
-    p2  = document.createElement("p",{
-        id:"pega1"
-    })
-    animate2.appendChild(vc)
-    animate3.appendChild(inimigo)
-
-    p2.innerHTML = 'pega eu'
-    div2.appendChild(animate1)
-    div2.appendChild(div1)
-    div2.appendChild(animate2)
-    div2.appendChild(animate3)   
 }
+
+function completeTable(t,head) {
+    //head
+    let thead = t.createTHead()
+    let thead_row = thead.insertRow(0)
+    head.forEach(function(elem,index) {
+        let thead_cell = thead_row.insertCell(index)
+        thead_cell.innerHTML = elem
+    })
+    //body
+    return t.createTBody()
+}
+
+
+function addRow(t,key,value) {
+    let tbody_row = t.insertRow(0)
+    let tbody_cell_key = tbody_row.insertCell(0)
+    tbody_cell_key.innerHTML = key
+    tbody_cell_key.setAttribute('class','ind_table_body')
+    let tbody_cell_value = tbody_row.insertCell(1)
+    tbody_cell_value.innerHTML = value
+}
+
